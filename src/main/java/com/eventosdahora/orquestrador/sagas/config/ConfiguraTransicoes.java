@@ -2,17 +2,17 @@ package com.eventosdahora.orquestrador.sagas.config;
 
 import com.eventosdahora.orquestrador.sagas.dominio.PedidoEvent;
 import com.eventosdahora.orquestrador.sagas.dominio.PedidoState;
+import com.eventosdahora.orquestrador.sagas.kafka.KafkaProducer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 
 @EnableStateMachineFactory
 public class ConfiguraTransicoes extends StateMachineConfig {
 
-    /**
-     * Configura as transições
-     * @param transitions
-     * @throws Exception
-     */
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
     @Override
     public void configure(StateMachineTransitionConfigurer<PedidoState, PedidoEvent> transitions) throws Exception {
         casosSucesso(transitions);
@@ -24,19 +24,19 @@ public class ConfiguraTransicoes extends StateMachineConfig {
                     .source(PedidoState.NOVO_PEDIDO)
                     .target(PedidoState.NOVO_PEDIDO)
                     .event(PedidoEvent.RESERVAR_TICKET)
-                    .action(publicaTopicoTicket())
+                    .action(kafkaProducer.publicaTopicoTicket(PedidoEvent.RESERVAR_TICKET))
                     .and()
                 .withExternal()
                     .source(PedidoState.NOVO_PEDIDO)
                     .target(PedidoState.TICKET_RESERVADO)
                     .event(PedidoEvent.RESERVA_TICKET_APROVADO)
-                    .action(publicaTopicoPagamento())
+                    .action(kafkaProducer.publicaTopicoPagamento(PedidoEvent.PAGAR_TICKET))
                     .and()
                 .withExternal()
                     .source(PedidoState.TICKET_RESERVADO)
                     .target(PedidoState.PAGAMENTO_APROVADO)
                     .event(PedidoEvent.PAGAR_TICKET_APROVADO)
-                    .action(publicaTopicoTicket()) // publicar consolidação da compra
+                    .action(kafkaProducer.publicaTopicoTicket(PedidoEvent.CONSOLIDAR_COMPRA)) // publicar consolidação da compra
                     .and()
                 .withExternal()
                     .source(PedidoState.PAGAMENTO_APROVADO)
@@ -55,7 +55,7 @@ public class ConfiguraTransicoes extends StateMachineConfig {
                     .source(PedidoState.TICKET_RESERVADO)
                     .target(PedidoState.PAGAMENTO_NEGADO)
                     .event(PedidoEvent.PAGAR_TICKET_NEGADO)
-                    .action(publicTopicoTicketRollback())
+                    .action(kafkaProducer.publicTopicoTicketRollback(PedidoEvent.RESTAURAR_TICKET))
                     .and()
                 .withExternal()
                     .source(PedidoState.PAGAMENTO_NEGADO)
