@@ -27,7 +27,6 @@ public class Runner implements ApplicationRunner {
 
         orquestradorPedidoService.novoPedido(pedido);
 
-        pedido.setEvent(PedidoEvent.RESERVA_TICKET_APROVADO);
         StateMachine<PedidoState, PedidoEvent> pagarTicketSM = orquestradorPedidoService.replyChannel(pedido);
         log.info("Após chamar respostaTicket() " + pagarTicketSM.getState().getId().name());
     }
