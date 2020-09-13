@@ -4,6 +4,7 @@ import com.eventosdahora.orquestrador.sagas.dominio.Pedido;
 import com.eventosdahora.orquestrador.sagas.dominio.PedidoEvent;
 import com.eventosdahora.orquestrador.sagas.dominio.PedidoState;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.Message;
@@ -13,8 +14,7 @@ import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-
+@Log
 @RequiredArgsConstructor
 @Service
 public class OrquestradorPedidoService implements PedidoController {
@@ -25,7 +25,6 @@ public class OrquestradorPedidoService implements PedidoController {
     @Autowired
     private PedidoStateChangeInterceptor pedidoStateInterceptor;
 
-    @Transactional
     @Override
     public void novoPedido(Pedido pedido) {
         pedido.setEvent(PedidoEvent.RESERVAR_TICKET);
@@ -33,9 +32,10 @@ public class OrquestradorPedidoService implements PedidoController {
         sendEvent(pedido, sm, pedido.getEvent());
     }
 
-    @Transactional
-    @KafkaListener(topics = "${nome.topico.reply.channel}")
-    public StateMachine<PedidoState, PedidoEvent> replyChannel(Pedido pedido){
+    @KafkaListener(topics = "${nome.topico.reply.channel}",
+            containerFactory = "pedidoKafkaListenerContainerFactory")
+    public StateMachine<PedidoState, PedidoEvent> replyChannel(Pedido pedido) {
+        log.info("Pedido recebido do tópico reply-channel " + pedido);
         StateMachine<PedidoState, PedidoEvent> sm = build(pedido);
         sendEvent(pedido, sm, pedido.getEvent());
         return sm;

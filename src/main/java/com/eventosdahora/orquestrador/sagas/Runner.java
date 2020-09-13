@@ -11,6 +11,11 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 @Log
 @Component
 public class Runner implements ApplicationRunner {
@@ -25,9 +30,12 @@ public class Runner implements ApplicationRunner {
         pedido.setId(1L);
         pedido.setState(PedidoState.NOVO_PEDIDO);
 
-        orquestradorPedidoService.novoPedido(pedido);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
+        ScheduledFuture<?> future = executor.scheduleAtFixedRate(() -> {
+            orquestradorPedidoService.novoPedido(pedido);
+        }, 500, 100, TimeUnit.MILLISECONDS);
 
-        StateMachine<PedidoState, PedidoEvent> pagarTicketSM = orquestradorPedidoService.replyChannel(pedido);
-        log.info("Após chamar respostaTicket() " + pagarTicketSM.getState().getId().name());
+
+
     }
 }
