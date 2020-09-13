@@ -11,6 +11,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -27,7 +28,7 @@ public class Runner implements ApplicationRunner {
     public void run(ApplicationArguments args) {
 
         Pedido pedido = new Pedido();
-        pedido.setId(1L);
+        pedido.setId((long)new Random().nextInt(150));
         pedido.setState(PedidoState.NOVO_PEDIDO);
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
