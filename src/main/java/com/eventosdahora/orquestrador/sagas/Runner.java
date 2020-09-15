@@ -27,16 +27,12 @@ public class Runner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
 
-        Pedido pedido = new Pedido();
-        pedido.setId((long)new Random().nextInt(150));
-        pedido.setState(PedidoState.NOVO_PEDIDO);
-
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
-        ScheduledFuture<?> future = executor.scheduleAtFixedRate(() -> {
+        for(int i = 0; i < 10; i++) {
+            Pedido pedido = new Pedido();
+            pedido.setId((long)i);
+            pedido.setState(PedidoState.NOVO_PEDIDO);
             orquestradorPedidoService.novoPedido(pedido);
-        }, 500, 100, TimeUnit.MILLISECONDS);
-
-
+        }
 
     }
 }
