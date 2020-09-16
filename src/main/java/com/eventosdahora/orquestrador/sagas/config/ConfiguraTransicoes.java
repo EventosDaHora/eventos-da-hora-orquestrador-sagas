@@ -60,7 +60,7 @@ public class ConfiguraTransicoes extends StateMachineConfig {
                 .withExternal()
                     .source(PedidoState.PAGAMENTO_NEGADO)
                     .target(PedidoState.TICKET_RESTAURADO)
-                    .event(PedidoEvent.TICKET_RESTAURADO_SUCESSO)
+                    .event(PedidoEvent.TICKET_RESTAURADO_APROVADO)
                     .and()
                 .withExternal()
                     .source(PedidoState.PAGAMENTO_NEGADO)

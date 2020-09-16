@@ -27,12 +27,10 @@ public class Runner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
 
-        for(int i = 0; i < 10; i++) {
             Pedido pedido = new Pedido();
-            pedido.setId((long)i);
+            pedido.setId(5165656515165L);
             pedido.setState(PedidoState.NOVO_PEDIDO);
             orquestradorPedidoService.novoPedido(pedido);
-        }
 
     }
 }
