@@ -1,7 +1,7 @@
 package com.eventosdahora.orquestrador.sagas.config;
 
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoEvent;
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoState;
+import com.eventosdahora.orquestrador.sagas.dto.OrderEvent;
+import com.eventosdahora.orquestrador.sagas.dto.OrderState;
 import com.eventosdahora.orquestrador.sagas.kafka.KafkaProducer;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,32 +16,32 @@ import java.util.EnumSet;
 
 @Log
 @Configuration
-public class StateMachineConfig extends StateMachineConfigurerAdapter<PedidoState, PedidoEvent>  {
+public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderState, OrderEvent>  {
 
     @Autowired
     private KafkaProducer kafkaProducer;
 
     @Override
-    public void configure(StateMachineConfigurationConfigurer<PedidoState, PedidoEvent> config) throws Exception {
+    public void configure(StateMachineConfigurationConfigurer<OrderState, OrderEvent> config) throws Exception {
         config.withConfiguration()
                 .autoStartup(false)
                 .listener(getStateMachineListener());
     }
 
     @Override
-    public void configure(StateMachineStateConfigurer<PedidoState, PedidoEvent> states) throws Exception {
+    public void configure(StateMachineStateConfigurer<OrderState, OrderEvent> states) throws Exception {
         states.withStates()
-                .initial(PedidoState.NOVO_PEDIDO)
-                .states(EnumSet.allOf(PedidoState.class))
-                .end(PedidoState.TICKET_COMPRADO)
-                .end(PedidoState.TICKET_RESTAURADO)
-                .end(PedidoState.TICKET_RESERVADO_ERRO);
+                .initial(OrderState.NOVO_PEDIDO)
+                .states(EnumSet.allOf(OrderState.class))
+                .end(OrderState.TICKET_COMPRADO)
+                .end(OrderState.TICKET_RESTAURADO)
+                .end(OrderState.TICKET_RESERVADO_ERRO);
     }
 
-    protected StateMachineListenerAdapter<PedidoState, PedidoEvent> getStateMachineListener() {
+    protected StateMachineListenerAdapter<OrderState, OrderEvent> getStateMachineListener() {
         return new StateMachineListenerAdapter<>() {
             @Override
-            public void stateChanged(State<PedidoState, PedidoEvent> from, State<PedidoState, PedidoEvent> to) {
+            public void stateChanged(State<OrderState, OrderEvent> from, State<OrderState, OrderEvent> to) {
                 log.info(String.format("stateChanged(from %s to: %s)", from.getId().name() + "", to.getId().name() + ""));
             }
         };

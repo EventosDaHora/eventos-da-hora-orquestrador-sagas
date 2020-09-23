@@ -1,6 +1,6 @@
 package com.eventosdahora.orquestrador.sagas.kafka;
 
-import com.eventosdahora.orquestrador.sagas.dominio.Pedido;
+import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,16 +26,16 @@ public class KafkaConsumerConfig {
     private String groupId;
 
     @Bean
-    public ConsumerFactory<String, Pedido> pedidoConsumerFactory() {
+    public ConsumerFactory<String, OrderDTO> pedidoConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(Pedido.class));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(OrderDTO.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Pedido> pedidoKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Pedido> factory
+    public ConcurrentKafkaListenerContainerFactory<String, OrderDTO> pedidoKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrderDTO> factory
                 = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(pedidoConsumerFactory());
         return factory;

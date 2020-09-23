@@ -1,6 +1,6 @@
 package com.eventosdahora.orquestrador.sagas.kafka;
 
-import com.eventosdahora.orquestrador.sagas.dominio.Pedido;
+import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ public class KafkaProducerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ProducerFactory<String, Pedido> pedidoProducerFactory() {
+    public ProducerFactory<String, OrderDTO> pedidoProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -30,7 +30,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, Pedido> kafkaTemplate() {
+    public KafkaTemplate<String, OrderDTO> kafkaTemplate() {
         return new KafkaTemplate<>(pedidoProducerFactory());
     }
 

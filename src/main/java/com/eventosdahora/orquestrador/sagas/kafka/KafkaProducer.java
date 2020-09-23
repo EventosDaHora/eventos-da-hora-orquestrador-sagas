@@ -1,8 +1,8 @@
 package com.eventosdahora.orquestrador.sagas.kafka;
 
-import com.eventosdahora.orquestrador.sagas.dominio.Pedido;
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoEvent;
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoState;
+import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
+import com.eventosdahora.orquestrador.sagas.dto.OrderEvent;
+import com.eventosdahora.orquestrador.sagas.dto.OrderState;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +18,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 public class KafkaProducer {
 
     @Autowired
-    private KafkaTemplate<String, Pedido> kafkaTemplate;
+    private KafkaTemplate<String, OrderDTO> kafkaTemplate;
 
     @Value(value = "${nome.topico.ticket}")
     private String nomeTopicoTicket;
@@ -29,38 +29,38 @@ public class KafkaProducer {
     @Value(value = "${nome.topico.pagamento}")
     private String nomeTopicoPagamento;
 
-    public Action<PedidoState, PedidoEvent> publicaTopicoPagamento(PedidoEvent event) {
+    public Action<OrderState, OrderEvent> publicaTopicoPagamento(OrderEvent event) {
         return context -> {
-            Pedido pedido = (Pedido)context.getMessageHeader(Pedido.IDENTIFICADOR);
-            pedido.setEvent(event);
-            publicaTopico(nomeTopicoPagamento, pedido);
+            OrderDTO orderDTO = (OrderDTO)context.getMessageHeader(OrderDTO.IDENTIFICADOR);
+            orderDTO.setOrderEvent(event);
+            publicaTopico(nomeTopicoPagamento, orderDTO);
         };
     }
 
-    public Action<PedidoState, PedidoEvent> publicaTopicoTicket(PedidoEvent event) {
+    public Action<OrderState, OrderEvent> publicaTopicoTicket(OrderEvent event) {
         return context -> {
-            Pedido pedido = (Pedido)context.getMessageHeader(Pedido.IDENTIFICADOR);
-            pedido.setEvent(event);
-            publicaTopico(nomeTopicoTicket, pedido);
+            OrderDTO orderDTO = (OrderDTO)context.getMessageHeader(OrderDTO.IDENTIFICADOR);
+            orderDTO.setOrderEvent(event);
+            publicaTopico(nomeTopicoTicket, orderDTO);
         };
     }
 
-    public Action<PedidoState, PedidoEvent> publicTopicoTicketRollback(PedidoEvent event) {
+    public Action<OrderState, OrderEvent> publicTopicoTicketRollback(OrderEvent event) {
         return context -> {
-            Pedido pedido = (Pedido)context.getMessageHeader(Pedido.IDENTIFICADOR);
-            pedido.setEvent(event);
-            publicaTopico(nomeTopicoTicketRollback, pedido);
+            OrderDTO orderDTO = (OrderDTO)context.getMessageHeader(OrderDTO.IDENTIFICADOR);
+            orderDTO.setOrderEvent(event);
+            publicaTopico(nomeTopicoTicketRollback, orderDTO);
         };
     }
 
-    private void publicaTopico(String nomeTopico, Pedido pedido) {
-        log.info("Produzindo mensagem " + pedido.toString() + " no tópico " + nomeTopico);
-        ListenableFuture<SendResult<String, Pedido>> future = kafkaTemplate.send(nomeTopico, pedido);
+    private void publicaTopico(String nomeTopico, OrderDTO orderDTO) {
+        log.info("Produzindo mensagem " + orderDTO.toString() + " no tópico " + nomeTopico);
+        ListenableFuture<SendResult<String, OrderDTO>> future = kafkaTemplate.send(nomeTopico, orderDTO);
 
         future.addCallback(new ListenableFutureCallback<>() {
             @Override
-            public void onSuccess(SendResult<String, Pedido> result) {
-                log.info("Pedido enviado: " + pedido + "\n Com offset: " + result.getRecordMetadata().offset());
+            public void onSuccess(SendResult<String, OrderDTO> result) {
+                log.info("Pedido enviado: " + orderDTO + "\n Com offset: " + result.getRecordMetadata().offset());
             }
 
             @Override

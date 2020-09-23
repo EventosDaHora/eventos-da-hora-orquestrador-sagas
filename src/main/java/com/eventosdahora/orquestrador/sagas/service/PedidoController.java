@@ -1,6 +1,6 @@
 package com.eventosdahora.orquestrador.sagas.service;
 
-import com.eventosdahora.orquestrador.sagas.dominio.Pedido;
+import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface PedidoController {
 
     @PostMapping
-    void novoPedido(Pedido pedido);
+    void novoPedido(OrderDTO orderDTO);
 }

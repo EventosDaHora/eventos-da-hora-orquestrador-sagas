@@ -1,6 +1,6 @@
-package com.eventosdahora.orquestrador.sagas.dominio;
+package com.eventosdahora.orquestrador.sagas.dto;
 
-public enum PedidoEvent {
+public enum OrderEvent {
     RESERVAR_TICKET, RESERVA_TICKET_APROVADO, RESERVA_TICKET_NEGADO,
     PAGAR_TICKET, PAGAR_TICKET_APROVADO, PAGAR_TICKET_NEGADO,
     CONSOLIDAR_COMPRA, CONSOLIDACAO_COMPRA_APROVADO,

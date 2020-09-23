@@ -1,8 +1,8 @@
 package com.eventosdahora.orquestrador.sagas.service;
 
-import com.eventosdahora.orquestrador.sagas.dominio.Pedido;
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoEvent;
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoState;
+import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
+import com.eventosdahora.orquestrador.sagas.dto.OrderEvent;
+import com.eventosdahora.orquestrador.sagas.dto.OrderState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.messaging.Message;
@@ -17,23 +17,23 @@ import java.util.Optional;
 @Log
 @RequiredArgsConstructor
 @Component
-public class PedidoStateChangeInterceptor extends StateMachineInterceptorAdapter<PedidoState, PedidoEvent> {
+public class PedidoStateChangeInterceptor extends StateMachineInterceptorAdapter<OrderState, OrderEvent> {
 
     @Override
-    public void postStateChange(State<PedidoState, PedidoEvent> state,
-                                Message<PedidoEvent> message,
-                                Transition<PedidoState, PedidoEvent> transition,
-                                StateMachine<PedidoState, PedidoEvent> stateMachine,
-                                StateMachine<PedidoState, PedidoEvent> rootStateMachine) {
+    public void postStateChange(State<OrderState, OrderEvent> state,
+                                Message<OrderEvent> message,
+                                Transition<OrderState, OrderEvent> transition,
+                                StateMachine<OrderState, OrderEvent> stateMachine,
+                                StateMachine<OrderState, OrderEvent> rootStateMachine) {
 
         log.info("Dentro do interceptador");
         log.info("Estado: " + state.getId().name());
 
         Optional.of(message)
                 .flatMap(msg -> Optional.ofNullable(
-                        (Pedido) msg.getHeaders().getOrDefault(Pedido.IDENTIFICADOR, null)))
+                        (OrderDTO) msg.getHeaders().getOrDefault(OrderDTO.IDENTIFICADOR, null)))
                 .ifPresent(pedido -> {
-                    pedido.setState(state.getId());
+                    pedido.setOrderState(state.getId());
                     //TODO: Notificar o serviço de pedido sobre o novo estado
                 });
     }

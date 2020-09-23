@@ -1,21 +1,13 @@
 package com.eventosdahora.orquestrador.sagas;
 
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoState;
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoEvent;
-import com.eventosdahora.orquestrador.sagas.dominio.Pedido;
+import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
+import com.eventosdahora.orquestrador.sagas.dto.OrderState;
 import com.eventosdahora.orquestrador.sagas.service.OrquestradorPedidoService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Component;
-
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 @Log
 @Component
@@ -27,10 +19,10 @@ public class Runner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
 
-            Pedido pedido = new Pedido();
-            pedido.setId(5165656515165L);
-            pedido.setState(PedidoState.NOVO_PEDIDO);
-            orquestradorPedidoService.novoPedido(pedido);
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setOrderId(5165656515165L);
+            orderDTO.setOrderState(OrderState.NOVO_PEDIDO);
+            orquestradorPedidoService.novoPedido(orderDTO);
 
     }
 }

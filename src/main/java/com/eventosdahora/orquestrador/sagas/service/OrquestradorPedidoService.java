@@ -1,8 +1,8 @@
 package com.eventosdahora.orquestrador.sagas.service;
 
-import com.eventosdahora.orquestrador.sagas.dominio.Pedido;
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoEvent;
-import com.eventosdahora.orquestrador.sagas.dominio.PedidoState;
+import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
+import com.eventosdahora.orquestrador.sagas.dto.OrderEvent;
+import com.eventosdahora.orquestrador.sagas.dto.OrderState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,38 +20,38 @@ import org.springframework.stereotype.Service;
 public class OrquestradorPedidoService implements PedidoController {
 
     @Autowired
-    private StateMachineFactory<PedidoState, PedidoEvent> stateMachineFactory;
+    private StateMachineFactory<OrderState, OrderEvent> stateMachineFactory;
 
     @Autowired
     private PedidoStateChangeInterceptor pedidoStateInterceptor;
 
     @Override
-    public void novoPedido(Pedido pedido) {
-        pedido.setEvent(PedidoEvent.RESERVAR_TICKET);
-        StateMachine<PedidoState, PedidoEvent> sm = build(pedido);
-        sendEvent(pedido, sm, pedido.getEvent());
+    public void novoPedido(OrderDTO orderDTO) {
+        orderDTO.setOrderEvent(OrderEvent.RESERVAR_TICKET);
+        StateMachine<OrderState, OrderEvent> sm = build(orderDTO);
+        sendEvent(orderDTO, sm, orderDTO.getOrderEvent());
     }
 
     @KafkaListener(topics = "${nome.topico.reply.channel}",
             containerFactory = "pedidoKafkaListenerContainerFactory")
-    public StateMachine<PedidoState, PedidoEvent> replyChannel(Pedido pedido) {
-        log.info("Pedido recebido do tópico reply-channel " + pedido);
-        StateMachine<PedidoState, PedidoEvent> sm = build(pedido);
-        sendEvent(pedido, sm, pedido.getEvent());
+    public StateMachine<OrderState, OrderEvent> replyChannel(OrderDTO orderDTO) {
+        log.info("Pedido recebido do tópico reply-channel " + orderDTO);
+        StateMachine<OrderState, OrderEvent> sm = build(orderDTO);
+        sendEvent(orderDTO, sm, orderDTO.getOrderEvent());
         return sm;
     }
 
-    private void sendEvent(Pedido pedido, StateMachine<PedidoState, PedidoEvent> sm, PedidoEvent event) {
-        Message<PedidoEvent> msg = MessageBuilder.withPayload(event)
-                .setHeader(Pedido.IDENTIFICADOR, pedido)
+    private void sendEvent(OrderDTO orderDTO, StateMachine<OrderState, OrderEvent> sm, OrderEvent event) {
+        Message<OrderEvent> msg = MessageBuilder.withPayload(event)
+                .setHeader(OrderDTO.IDENTIFICADOR, orderDTO)
                 .build();
 
         sm.sendEvent(msg);
     }
 
-    private StateMachine<PedidoState, PedidoEvent> build(Pedido pedido) {
+    private StateMachine<OrderState, OrderEvent> build(OrderDTO orderDTO) {
 
-        StateMachine<PedidoState, PedidoEvent> sm = stateMachineFactory.getStateMachine(pedido.getId().toString());
+        StateMachine<OrderState, OrderEvent> sm = stateMachineFactory.getStateMachine(orderDTO.getOrderId().toString());
 
         sm.stop();
 
@@ -59,7 +59,7 @@ public class OrquestradorPedidoService implements PedidoController {
         sm.getStateMachineAccessor()
           .doWithAllRegions(sma -> {
             sma.addStateMachineInterceptor(pedidoStateInterceptor);
-            sma.resetStateMachine(new DefaultStateMachineContext<>(pedido.getState(), null, null, null));
+            sma.resetStateMachine(new DefaultStateMachineContext<>(orderDTO.getOrderState(), null, null, null));
           });
 
         sm.start();
