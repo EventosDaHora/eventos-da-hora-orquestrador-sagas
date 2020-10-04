@@ -16,22 +16,22 @@ import java.util.Map;
 
 @Configuration
 public class KafkaProducerConfig {
-
-    @Value(value = "${kafka.bootstrapAddress}")
-    private String bootstrapAddress;
-
-    @Bean
-    public ProducerFactory<String, OrderDTO> pedidoProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
-
-    @Bean
-    public KafkaTemplate<String, OrderDTO> kafkaTemplate() {
-        return new KafkaTemplate<>(pedidoProducerFactory());
-    }
-
+	
+	@Value(value = "${kafka.bootstrapAddress}")
+	private String bootstrapAddress;
+	
+	@Bean
+	public ProducerFactory<String, OrderDTO> pedidoProducerFactory() {
+		Map<String, Object> configProps = new HashMap<>();
+		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+		return new DefaultKafkaProducerFactory<>(configProps);
+	}
+	
+	@Bean
+	public KafkaTemplate<String, OrderDTO> kafkaTemplate() {
+		return new KafkaTemplate<>(pedidoProducerFactory());
+	}
+	
 }

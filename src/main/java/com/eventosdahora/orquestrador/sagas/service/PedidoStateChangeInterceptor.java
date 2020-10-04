@@ -18,23 +18,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class PedidoStateChangeInterceptor extends StateMachineInterceptorAdapter<OrderState, OrderEvent> {
-
-    @Override
-    public void postStateChange(State<OrderState, OrderEvent> state,
-                                Message<OrderEvent> message,
-                                Transition<OrderState, OrderEvent> transition,
-                                StateMachine<OrderState, OrderEvent> stateMachine,
-                                StateMachine<OrderState, OrderEvent> rootStateMachine) {
-
-        log.info("Dentro do interceptador");
-        log.info("Estado: " + state.getId().name());
-
-        Optional.of(message)
-                .flatMap(msg -> Optional.ofNullable(
-                        (OrderDTO) msg.getHeaders().getOrDefault(OrderDTO.IDENTIFICADOR, null)))
-                .ifPresent(pedido -> {
-                    pedido.setOrderState(state.getId());
-                    //TODO: Notificar o serviço de pedido sobre o novo estado
-                });
-    }
+	
+	@Override
+	public void postStateChange(State<OrderState, OrderEvent> state,
+	                            Message<OrderEvent> message,
+	                            Transition<OrderState, OrderEvent> transition,
+	                            StateMachine<OrderState, OrderEvent> stateMachine,
+	                            StateMachine<OrderState, OrderEvent> rootStateMachine) {
+		
+		log.info("Dentro do interceptador");
+		log.info("Estado: " + state.getId().name());
+		
+		Optional.of(message)
+		        .flatMap(msg -> Optional.ofNullable(
+				        (OrderDTO) msg.getHeaders().getOrDefault(OrderDTO.IDENTIFICADOR, null)))
+		        .ifPresent(pedido -> {
+			        pedido.setOrderState(state.getId());
+			        //TODO: Notificar o serviço de pedido sobre o novo estado
+		        });
+	}
 }

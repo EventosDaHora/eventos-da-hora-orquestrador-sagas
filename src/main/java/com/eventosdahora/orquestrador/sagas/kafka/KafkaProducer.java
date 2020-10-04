@@ -16,57 +16,65 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 @Log
 @Component
 public class KafkaProducer {
-
-    @Autowired
-    private KafkaTemplate<String, OrderDTO> kafkaTemplate;
-
-    @Value(value = "${nome.topico.ticket}")
-    private String nomeTopicoTicket;
-
-    @Value(value = "${nome.topico.ticket.rollback}")
-    private String nomeTopicoTicketRollback;
-
-    @Value(value = "${nome.topico.pagamento}")
-    private String nomeTopicoPagamento;
-
-    public Action<OrderState, OrderEvent> publicaTopicoPagamento(OrderEvent event) {
-        return context -> {
-            OrderDTO orderDTO = (OrderDTO)context.getMessageHeader(OrderDTO.IDENTIFICADOR);
-            orderDTO.setOrderEvent(event);
-            publicaTopico(nomeTopicoPagamento, orderDTO);
-        };
-    }
-
-    public Action<OrderState, OrderEvent> publicaTopicoTicket(OrderEvent event) {
-        return context -> {
-            OrderDTO orderDTO = (OrderDTO)context.getMessageHeader(OrderDTO.IDENTIFICADOR);
-            orderDTO.setOrderEvent(event);
-            publicaTopico(nomeTopicoTicket, orderDTO);
-        };
-    }
-
-    public Action<OrderState, OrderEvent> publicTopicoTicketRollback(OrderEvent event) {
-        return context -> {
-            OrderDTO orderDTO = (OrderDTO)context.getMessageHeader(OrderDTO.IDENTIFICADOR);
-            orderDTO.setOrderEvent(event);
-            publicaTopico(nomeTopicoTicketRollback, orderDTO);
-        };
-    }
-
-    private void publicaTopico(String nomeTopico, OrderDTO orderDTO) {
-        log.info("Produzindo mensagem " + orderDTO.toString() + " no tópico " + nomeTopico);
-        ListenableFuture<SendResult<String, OrderDTO>> future = kafkaTemplate.send(nomeTopico, orderDTO);
-
-        future.addCallback(new ListenableFutureCallback<>() {
-            @Override
-            public void onSuccess(SendResult<String, OrderDTO> result) {
-                log.info("Pedido enviado: " + orderDTO + "\n Com offset: " + result.getRecordMetadata().offset());
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                log.info("Não foi possível enviar pedido");
-            }
-        });
-    }
+	
+	@Autowired
+	private KafkaTemplate<String, OrderDTO> kafkaTemplate;
+	
+	@Value(value = "${nome.topico.ticket}")
+	private String nomeTopicoTicket;
+	
+	@Value(value = "${nome.topico.ticket.rollback}")
+	private String nomeTopicoTicketRollback;
+	
+	@Value(value = "${nome.topico.pagamento}")
+	private String nomeTopicoPagamento;
+	
+	public Action<OrderState, OrderEvent> publicaTopicoPagamento(OrderEvent event) {
+		return context -> {
+			OrderDTO orderDTO = (OrderDTO) context.getMessageHeader(OrderDTO.IDENTIFICADOR);
+			orderDTO.setOrderEvent(event);
+			publicaTopico(nomeTopicoPagamento, orderDTO);
+		};
+	}
+	
+	public Action<OrderState, OrderEvent> publicaTopicoTicket(OrderEvent event) {
+		return context -> {
+			OrderDTO orderDTO = (OrderDTO) context.getMessageHeader(OrderDTO.IDENTIFICADOR);
+			orderDTO.setOrderEvent(event);
+			publicaTopico(nomeTopicoTicket, orderDTO);
+		};
+	}
+	
+	public Action<OrderState, OrderEvent> publicaTopicoTicketConsolidarCompra(OrderEvent event) {
+		return context -> {
+			OrderDTO orderDTO = (OrderDTO) context.getMessageHeader(OrderDTO.IDENTIFICADOR);
+			orderDTO.setOrderEvent(event);
+			publicaTopico(nomeTopicoTicket, orderDTO);
+		};
+	}
+	
+	public Action<OrderState, OrderEvent> publicTopicoTicketRollback(OrderEvent event) {
+		return context -> {
+			OrderDTO orderDTO = (OrderDTO) context.getMessageHeader(OrderDTO.IDENTIFICADOR);
+			orderDTO.setOrderEvent(event);
+			publicaTopico(nomeTopicoTicketRollback, orderDTO);
+		};
+	}
+	
+	private void publicaTopico(String nomeTopico, OrderDTO orderDTO) {
+  		log.info("Produzindo mensagem " + orderDTO.toString() + " no tópico " + nomeTopico.toUpperCase());
+		ListenableFuture<SendResult<String, OrderDTO>> future = kafkaTemplate.send(nomeTopico, orderDTO);
+		
+		future.addCallback(new ListenableFutureCallback<>() {
+			@Override
+			public void onSuccess(SendResult<String, OrderDTO> result) {
+				log.info("Pedido enviado: " + orderDTO + "\n Com offset: " + result.getRecordMetadata().offset());
+			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				log.info("Não foi possível enviar pedido");
+			}
+		});
+	}
 }

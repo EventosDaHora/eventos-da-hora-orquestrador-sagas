@@ -18,26 +18,27 @@ import java.util.Map;
 @EnableKafka
 @Configuration
 public class KafkaConsumerConfig {
-
-    @Value(value = "${kafka.bootstrapAddress}")
-    private String bootstrapAddress;
-
-    @Value(value = "${kafka.groupId}")
-    private String groupId;
-
-    @Bean
-    public ConsumerFactory<String, OrderDTO> pedidoConsumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(OrderDTO.class));
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderDTO> pedidoKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrderDTO> factory
-                = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(pedidoConsumerFactory());
-        return factory;
-    }
+	
+	@Value(value = "${kafka.bootstrapAddress}")
+	private String bootstrapAddress;
+	
+	@Value(value = "${kafka.groupId}")
+	private String groupId;
+	
+	@Bean
+	public ConsumerFactory<String, OrderDTO> pedidoConsumerFactory() {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
+		                                         new JsonDeserializer<>(OrderDTO.class));
+	}
+	
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, OrderDTO> pedidoKafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, OrderDTO> factory
+				= new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(pedidoConsumerFactory());
+		return factory;
+	}
 }

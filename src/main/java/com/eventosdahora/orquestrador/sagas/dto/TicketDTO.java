@@ -9,8 +9,8 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public class TicketDTO {
-
-    private Long id;
-
-    private Long ammount;
+	
+	private Long id;
+	
+	private Long ammount;
 }

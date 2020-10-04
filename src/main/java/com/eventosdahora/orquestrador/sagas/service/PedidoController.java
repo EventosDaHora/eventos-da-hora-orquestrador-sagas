@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/pedido")
 public interface PedidoController {
-
-    @PostMapping
-    void novoPedido(OrderDTO orderDTO);
+	
+	@PostMapping
+	void novoPedido(OrderDTO orderDTO);
 }
