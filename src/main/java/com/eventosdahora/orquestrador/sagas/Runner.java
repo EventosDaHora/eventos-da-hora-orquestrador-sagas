@@ -23,16 +23,16 @@ public class Runner implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) {
 		
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setOrderId(5165656515164L);
-		orderDTO.setOrderState(OrderState.NOVO_PEDIDO);
-		orderDTO.setFees(new BigDecimal(111));
-		
-		orderDTO.setPayment(new PaymentDTO());
-		orderDTO.getPayment().setPaymentType(PaymentType.CREDITO);
-		orderDTO.getPayment().setVlAmount(new BigDecimal("100"));
-		
-		orquestradorPedidoService.novoPedido(orderDTO);
+//		OrderDTO orderDTO = new OrderDTO();
+//		orderDTO.setOrderId(5165656515164L);
+//		orderDTO.setOrderState(OrderState.NOVO_PEDIDO);
+//		orderDTO.setFees(new BigDecimal(111));
+//
+//		orderDTO.setPayment(new PaymentDTO());
+//		orderDTO.getPayment().setPaymentType(PaymentType.CREDITO);
+//		orderDTO.getPayment().setVlAmount(new BigDecimal("100"));
+//
+//		orquestradorPedidoService.novoPedido(orderDTO);
 		
 	}
 }
