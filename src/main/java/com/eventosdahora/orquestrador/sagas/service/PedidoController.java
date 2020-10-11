@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/pedido")
 public interface PedidoController {
 	
-	@PostMapping
+	@PostMapping("/novo")
 	void novoPedido(@RequestBody OrderDTO orderDTO);
 }
