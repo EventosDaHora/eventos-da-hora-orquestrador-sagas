@@ -28,6 +28,7 @@ public class OrquestradorPedidoService implements PedidoController {
 	
 	@Override
 	public void novoPedido(OrderDTO orderDTO) {
+		log.info("--- Recebendo Novo Pedido");
 		log.info(orderDTO.toString());
 		orderDTO.setOrderEvent(OrderEvent.RESERVAR_TICKET);
 		StateMachine<OrderState, OrderEvent> sm = build(orderDTO);

@@ -1,11 +1,13 @@
 package com.eventosdahora.orquestrador.sagas.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -19,6 +21,7 @@ public class OrderDTO {
 	
 	private Long orderId;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime createdDate;
 	
 	private OrderState orderState;
