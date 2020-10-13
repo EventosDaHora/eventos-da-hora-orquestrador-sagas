@@ -1,6 +1,7 @@
 package com.eventosdahora.orquestrador.sagas.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderDTO {
 	
 	public static final String IDENTIFICADOR = "ID_PEDIDO";
