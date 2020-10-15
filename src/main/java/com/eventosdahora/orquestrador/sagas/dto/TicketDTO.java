@@ -13,6 +13,5 @@ import lombok.*;
 public class TicketDTO {
 	
 	private Long id;
-	
-	private Long ammount;
+	private Long quantity;
 }
