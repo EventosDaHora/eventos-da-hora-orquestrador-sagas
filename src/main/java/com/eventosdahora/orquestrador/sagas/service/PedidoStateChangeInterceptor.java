@@ -36,25 +36,13 @@ public class PedidoStateChangeInterceptor extends StateMachineInterceptorAdapter
 	                            Transition<OrderState, OrderEvent> transition,
 	                            StateMachine<OrderState, OrderEvent> stateMachine,
 	                            StateMachine<OrderState, OrderEvent> rootStateMachine) {
-		
-		log.info("Dentro do interceptador");
-		log.info("Estado: " + state.getId().name());
-		
 		Optional.of(message)
 		        .flatMap(msg -> Optional.ofNullable(
 				        (OrderDTO) msg.getHeaders().getOrDefault(OrderDTO.IDENTIFICADOR, null)))
 		        .ifPresent(pedido -> {
 			        pedido.setOrderState(state.getId());
-			        //TODO: Notificar o serviço de pedido sobre o novo estado
-			        RestTemplate client = new RestTemplate();
 			        log.info("--- Notificando PEDIDO");
-			        log.info(pedido.toString());
-			        ObjectMapper ob = new ObjectMapper();
-			        try {
-				        log.info(ob.writeValueAsString(pedido));
-			        } catch (JsonProcessingException e) {
-				        e.printStackTrace();
-			        }
+			        RestTemplate client = new RestTemplate();
 			        client.put(pathOrderService, pedido);
 		        });
 	}

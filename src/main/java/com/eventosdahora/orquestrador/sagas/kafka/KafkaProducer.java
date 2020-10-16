@@ -62,13 +62,13 @@ public class KafkaProducer {
 	}
 	
 	private void publicaTopico(String nomeTopico, OrderDTO orderDTO) {
-  		log.info("Produzindo mensagem " + orderDTO.toString() + " no tópico " + nomeTopico.toUpperCase());
+  		log.info("--- Produzindo mensagem " + orderDTO.toString() + " no tópico " + nomeTopico.toUpperCase());
 		ListenableFuture<SendResult<String, OrderDTO>> future = kafkaTemplate.send(nomeTopico, orderDTO);
 		
 		future.addCallback(new ListenableFutureCallback<>() {
 			@Override
 			public void onSuccess(SendResult<String, OrderDTO> result) {
-				log.info("Pedido enviado: " + orderDTO + "\n Com offset: " + result.getRecordMetadata().offset());
+				log.info("Pedido enviado, orderId: " + orderDTO.getOrderId() + "\n Com offset: " + result.getRecordMetadata().offset());
 			}
 			
 			@Override

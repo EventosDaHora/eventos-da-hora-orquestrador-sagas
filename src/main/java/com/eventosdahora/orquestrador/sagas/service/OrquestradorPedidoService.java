@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Log
 @RequiredArgsConstructor
 @Service
-public class OrquestradorPedidoService implements PedidoController {
+public class OrquestradorPedidoService {
 	
 	@Autowired
 	private StateMachineFactory<OrderState, OrderEvent> stateMachineFactory;
@@ -26,7 +26,6 @@ public class OrquestradorPedidoService implements PedidoController {
 	@Autowired
 	private PedidoStateChangeInterceptor pedidoStateInterceptor;
 	
-	@Override
 	public void novoPedido(OrderDTO orderDTO) {
 		log.info("--- Recebendo Novo Pedido");
 		log.info(orderDTO.toString());
