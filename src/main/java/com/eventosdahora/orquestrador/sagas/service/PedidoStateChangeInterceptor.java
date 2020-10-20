@@ -42,6 +42,7 @@ public class PedidoStateChangeInterceptor extends StateMachineInterceptorAdapter
 		        .ifPresent(pedido -> {
 			        pedido.setOrderState(state.getId());
 			        log.info("--- Notificando PEDIDO");
+			        log.info(pedido.toString());
 			        RestTemplate client = new RestTemplate();
 			        client.put(pathOrderService, pedido);
 		        });
