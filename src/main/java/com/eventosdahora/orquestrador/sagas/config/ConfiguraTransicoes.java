@@ -5,6 +5,7 @@ import com.eventosdahora.orquestrador.sagas.dto.OrderState;
 import com.eventosdahora.orquestrador.sagas.kafka.KafkaProducer;
 import com.eventosdahora.orquestrador.sagas.service.OrquestradorPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 
