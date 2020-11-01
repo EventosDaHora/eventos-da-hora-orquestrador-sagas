@@ -2,8 +2,8 @@ package com.eventosdahora.orquestrador.sagas.kafka;
 
 import com.eventosdahora.orquestrador.sagas.dto.EmailRequest;
 import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
-import com.eventosdahora.orquestrador.sagas.dto.OrderEvent;
-import com.eventosdahora.orquestrador.sagas.dto.OrderState;
+import com.eventosdahora.orquestrador.sagas.domain.OrderEvent;
+import com.eventosdahora.orquestrador.sagas.domain.OrderState;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

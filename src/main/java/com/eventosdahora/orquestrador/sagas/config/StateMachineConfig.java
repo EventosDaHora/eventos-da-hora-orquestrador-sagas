@@ -1,10 +1,8 @@
 package com.eventosdahora.orquestrador.sagas.config;
 
-import com.eventosdahora.orquestrador.sagas.dto.OrderEvent;
-import com.eventosdahora.orquestrador.sagas.dto.OrderState;
-import com.eventosdahora.orquestrador.sagas.kafka.KafkaProducer;
+import com.eventosdahora.orquestrador.sagas.domain.OrderEvent;
+import com.eventosdahora.orquestrador.sagas.domain.OrderState;
 import lombok.extern.java.Log;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
@@ -17,9 +15,6 @@ import java.util.EnumSet;
 @Log
 @Configuration
 public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderState, OrderEvent> {
-	
-	@Autowired
-	private KafkaProducer kafkaProducer;
 	
 	@Override
 	public void configure(StateMachineConfigurationConfigurer<OrderState, OrderEvent> config) throws Exception {

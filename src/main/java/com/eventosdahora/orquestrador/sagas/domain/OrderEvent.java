@@ -1,4 +1,4 @@
-package com.eventosdahora.orquestrador.sagas.dto;
+package com.eventosdahora.orquestrador.sagas.domain;
 
 public enum OrderEvent {
 	RESERVAR_TICKET,

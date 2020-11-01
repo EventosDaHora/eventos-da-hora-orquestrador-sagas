@@ -1,7 +1,7 @@
 package com.eventosdahora.orquestrador.sagas;
 
 import com.eventosdahora.orquestrador.sagas.dto.OrderDTO;
-import com.eventosdahora.orquestrador.sagas.dto.OrderState;
+import com.eventosdahora.orquestrador.sagas.domain.OrderState;
 import com.eventosdahora.orquestrador.sagas.dto.PaymentDTO;
 import com.eventosdahora.orquestrador.sagas.dto.PaymentType;
 import com.eventosdahora.orquestrador.sagas.service.OrquestradorPedidoService;
@@ -22,17 +22,17 @@ public class Runner implements ApplicationRunner {
 	
 	@Override
 	public void run(ApplicationArguments args) {
-		
-//		OrderDTO orderDTO = new OrderDTO();
-//		orderDTO.setOrderId(5165656515164L);
-//		orderDTO.setOrderState(OrderState.NOVO_PEDIDO);
-//		orderDTO.setFees(new BigDecimal(111));
-//
-//		orderDTO.setPayment(new PaymentDTO());
-//		orderDTO.getPayment().setPaymentType(PaymentType.CREDITO);
-//		orderDTO.getPayment().setVlAmount(new BigDecimal("100"));
-//
-//		orquestradorPedidoService.novoPedido(orderDTO);
-		
+		/*
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setOrderId(5165656515164L);
+		orderDTO.setOrderState(OrderState.NOVO_PEDIDO);
+		orderDTO.setFees(new BigDecimal(111));
+
+		orderDTO.setPayment(new PaymentDTO());
+		orderDTO.getPayment().setPaymentType(PaymentType.CREDITO);
+		orderDTO.getPayment().setVlAmount(new BigDecimal("100"));
+
+		orquestradorPedidoService.novoPedido(orderDTO);
+		*/
 	}
 }
