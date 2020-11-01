@@ -44,7 +44,7 @@ public class OrquestradorPedidoService {
 
     @KafkaListener(topics = "${nome.topico.reply.channel}", containerFactory = "pedidoKafkaListenerContainerFactory")
     public StateMachine<OrderState, OrderEvent> replyChannel(OrderDTO orderDTO) {
-        log.info("Pedido recebido do tópico reply-channel " + orderDTO);
+        log.info("Pedido recebido do tópico reply-channel: " + orderDTO.toString());
         StateMachine<OrderState, OrderEvent> sm = build(orderDTO);
         sendEvent(orderDTO, sm);
         return sm;
@@ -59,9 +59,9 @@ public class OrquestradorPedidoService {
     }
 
     private StateMachine<OrderState, OrderEvent> build(OrderDTO orderDTO) {
-        return repository.findById(orderDTO.getOrderId()) //
-                .map(this::getStateMachine) //
-                .orElseGet(null);
+        return repository.findById(orderDTO.getOrderId())
+                .map(this::getStateMachine)
+                .orElse(stateMachineFactory.getStateMachine("default"));
     }
 
     private StateMachine<OrderState, OrderEvent> getStateMachine(Pedido pedido) {

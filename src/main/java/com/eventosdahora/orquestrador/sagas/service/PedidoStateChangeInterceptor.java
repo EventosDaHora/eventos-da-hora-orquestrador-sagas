@@ -22,52 +22,59 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class PedidoStateChangeInterceptor extends StateMachineInterceptorAdapter<OrderState, OrderEvent> {
-	
-	@Value(value = "${path.order.service}")
-	private String pathOrderService;
 
-	@Autowired
-	private PedidoRepository repository;
+    @Value(value = "${path.order.service}")
+    private String pathOrderService;
 
-	@Override
-	public void preStateChange(State<OrderState, OrderEvent> state,
-								Message<OrderEvent> message,
-								Transition<OrderState, OrderEvent> transition,
-								StateMachine<OrderState, OrderEvent> stateMachine,
-								StateMachine<OrderState, OrderEvent> rootStateMachine) {
-		Optional.ofNullable(message)
-				.flatMap(msg -> Optional.ofNullable(
-						(OrderDTO) msg.getHeaders().getOrDefault(OrderDTO.IDENTIFICADOR, -1L)))
-				.flatMap(orderDTO -> repository.findById(orderDTO.getOrderId()))
-				.ifPresent(pedido -> {
-					pedido.setOrderState(state.getId());
+    @Autowired
+    private PedidoRepository repository;
 
-					if (OrderState.isFinalState(pedido.getOrderState())) {
-						repository.delete(pedido);
-					} else {
-						repository.update(pedido.getId(), pedido.getOrderState());
-					}
-				});
-	}
+    @Override
+    public void preStateChange(State<OrderState, OrderEvent> state,
+                               Message<OrderEvent> message,
+                               Transition<OrderState, OrderEvent> transition,
+                               StateMachine<OrderState, OrderEvent> stateMachine,
+                               StateMachine<OrderState, OrderEvent> rootStateMachine) {
+        Optional.ofNullable(message)
+                .flatMap(msg -> Optional.ofNullable(
+                        (OrderDTO) msg.getHeaders().getOrDefault(OrderDTO.IDENTIFICADOR, -1L)))
+                .flatMap(orderDTO -> repository.findById(orderDTO.getOrderId()))
+                .ifPresent(pedido -> {
+                    pedido.setOrderState(state.getId());
 
-	@Override
-	public void postStateChange(State<OrderState, OrderEvent> state,
-	                            Message<OrderEvent> message,
-	                            Transition<OrderState, OrderEvent> transition,
-	                            StateMachine<OrderState, OrderEvent> stateMachine,
-	                            StateMachine<OrderState, OrderEvent> rootStateMachine) {
-		Optional.of(message)
-		        .flatMap(msg -> Optional.ofNullable(
-				        (OrderDTO) msg.getHeaders().getOrDefault(OrderDTO.IDENTIFICADOR, null)))
-		        .ifPresent(pedido -> {
-			        pedido.setOrderState(state.getId());
+                    if (!OrderState.isFinalState(pedido.getOrderState())) {
+                        repository.update(pedido.getId(), pedido.getOrderState());
+                    }
+                });
+    }
 
-			        if (!OrderState.NOVO_PEDIDO.equals(pedido.getOrderState())) {
-						log.info("--- Notificando PEDIDO");
-						log.info(pedido.toString());
-						RestTemplate client = new RestTemplate();
-						client.put(pathOrderService, pedido);
-					}
-		        });
-	}
+    @Override
+    public void postStateChange(State<OrderState, OrderEvent> state,
+                                Message<OrderEvent> message,
+                                Transition<OrderState, OrderEvent> transition,
+                                StateMachine<OrderState, OrderEvent> stateMachine,
+                                StateMachine<OrderState, OrderEvent> rootStateMachine) {
+        Optional.ofNullable(message)
+                .flatMap(msg -> Optional.ofNullable(
+                        (OrderDTO) msg.getHeaders().getOrDefault(OrderDTO.IDENTIFICADOR, null)))
+                .map(orderDTO -> {
+                    orderDTO.setOrderState(state.getId());
+
+                    if (!OrderState.NOVO_PEDIDO.equals(orderDTO.getOrderState())) {
+                        log.info("--- Notificando PEDIDO");
+                        log.info(orderDTO.toString());
+                        RestTemplate client = new RestTemplate();
+                        client.put(pathOrderService, orderDTO);
+                    }
+                    return orderDTO;
+                })
+                .flatMap(orderDTO -> repository.findById(orderDTO.getOrderId()))
+                .ifPresent(pedido -> {
+                    if (OrderState.isFinalState(transition.getTarget().getId())) {
+                        repository.delete(pedido);
+                        log.info("Pedidos atualmente no banco");
+                        repository.findAll().forEach(p -> log.info(p.toString()));
+                    }
+                });
+    }
 }

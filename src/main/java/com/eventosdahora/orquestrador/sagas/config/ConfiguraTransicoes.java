@@ -49,7 +49,7 @@ public class ConfiguraTransicoes extends StateMachineConfig {
                 .withExternal()
                     .source(OrderState.TICKET_RESERVADO).target(OrderState.PAGAMENTO_NEGADO)
                     .event(OrderEvent.PAGAR_TICKET_NEGADO)
-                    .action(kafkaProducer.publicTopicoTicketRollback(OrderEvent.RESTAURAR_TICKET))
+                    .action(kafkaProducer.publicaTopicoTicket(OrderEvent.RESTAURAR_TICKET))
                     .and()
                 .withExternal()
                     .source(OrderState.PAGAMENTO_NEGADO).target(OrderState.TICKET_RESTAURADO)

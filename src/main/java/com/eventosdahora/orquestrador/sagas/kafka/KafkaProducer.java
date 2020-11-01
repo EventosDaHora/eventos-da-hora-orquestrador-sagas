@@ -52,24 +52,14 @@ public class KafkaProducer {
 			OrderDTO orderDTO = (OrderDTO) context.getMessageHeader(OrderDTO.IDENTIFICADOR);
 			orderDTO.setOrderEvent(event);
 			publicaTopico(nomeTopicoTicket, orderDTO);
-		};
-	}
-	
-	public Action<OrderState, OrderEvent> publicaTopicoTicketConsolidarCompra(OrderEvent event) {
-		return context -> {
-			OrderDTO orderDTO = (OrderDTO) context.getMessageHeader(OrderDTO.IDENTIFICADOR);
-			orderDTO.setOrderEvent(event);
-			publicaTopico(nomeTopicoTicket, orderDTO);
-			publicaTopicoEmail(orderDTO, "Pedido N° "+orderDTO.getOrderId()+" - Pagamento aprovado :) ");
-		};
-	}
-	
-	public Action<OrderState, OrderEvent> publicTopicoTicketRollback(OrderEvent event) {
-		return context -> {
-			OrderDTO orderDTO = (OrderDTO) context.getMessageHeader(OrderDTO.IDENTIFICADOR);
-			orderDTO.setOrderEvent(event);
-			publicaTopico(nomeTopicoTicketRollback, orderDTO);
-			publicaTopicoEmail(orderDTO, "Pedido N° "+orderDTO.getOrderId()+" - Pagamento não aprovado :( ");
+
+			if (OrderEvent.CONSOLIDAR_COMPRA.equals(event)) {
+				publicaTopicoEmail(orderDTO, "Pedido N° "+orderDTO.getOrderId()+" - Pagamento aprovado :) ");
+			}
+
+			if (OrderEvent.RESTAURAR_TICKET.equals(event)) {
+				publicaTopicoEmail(orderDTO, "Pedido N° "+orderDTO.getOrderId()+" - Pagamento não aprovado :( ");
+			}
 		};
 	}
 	

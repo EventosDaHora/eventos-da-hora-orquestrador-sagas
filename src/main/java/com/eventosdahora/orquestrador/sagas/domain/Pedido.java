@@ -2,6 +2,7 @@ package com.eventosdahora.orquestrador.sagas.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity
+@ToString
 public class Pedido {
 
     @Id
