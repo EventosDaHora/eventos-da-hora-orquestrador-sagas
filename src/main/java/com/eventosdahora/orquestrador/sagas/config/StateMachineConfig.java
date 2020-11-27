@@ -37,7 +37,7 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderState
 		return new StateMachineListenerAdapter<>() {
 			@Override
 			public void stateChanged(State<OrderState, OrderEvent> from, State<OrderState, OrderEvent> to) {
-				log.info(String.format("stateChanged(from %s to: %s)", from.getId().name() + "",
+				log.info(String.format("Mudança de estado(de %s para: %s)", from.getId().name() + "",
 				                       to.getId().name() + ""));
 			}
 		};
